@@ -1,0 +1,67 @@
+{% include "users/base.html" %}
+{% load timetags %}
+<div class="container-fluid">
+    <ul class="list-group">
+    
+        {% for st in struc %}
+        <li class="list-group-item col-xs-12 col-md-8 col-md-offset-2">
+
+                <span class="col-xs-1 glyphicon glyphicon-user btn-lg" aria-hidden="true"></span>
+                <div class="col-xs-11">
+                    <span href="#" name="createProfile" data-toggle="modal" data-target="#profileModal">
+                        <b>{{ st.feed.fname }} {{ st.feed.lname }}</b>
+                    </span> -
+                    <a href="#" name="createProfile" data-toggle="modal" data-target="#profileModal">
+                        @{{ st.feed.user }}
+                    </a>
+
+                </div>
+                
+                <div class="col-xs-8">
+                    {{ st.feed.verb }}
+                    <a href="">{{ st.feed.event }}</a> in
+                    <a href="">#{{ st.feed.place }}</a>
+                    Find more at: <a href="{{ st.feed.link }}">{{ st.feed.link }}</a>
+                </div>
+
+                <div class="col-xs-3">
+                    <small>{{ st.feed.time|print_timestamp }}</small>
+                </div>
+        </li>
+        {% endfor %}
+
+    </ul>
+</div>
+
+
+<!-- Modal start
+<div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="createProfilelabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" style="color:red;" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="UserName">Name</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <center>
+                    <label class=".text-uppercase" for="name" style="color:#428bca;">Name</label><br><br>
+                    <label for="Designation"> Designation </label><br><br>
+                    <label for="College"> College </label><br><br>
+                    <label for="place"> Contact </label><br><br>
+                    
+                    <footer>
+                        <a href="">google +</a>
+                        <a href="">twitter</a>
+                        <a href="">facebook</a>
+                        <a href="">linkedin</a>
+                    </footer>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+Modal end
+ -->

@@ -1,0 +1,178 @@
+<title>EventNotify</title>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/app"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+      </div>
+    </div>
+  </nav>
+  <br><br><br><br>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="col-xs-1"></div>
+      <div class="col-xs-4">
+        <h4>Login</h4>
+        <hr>
+        <span id="errors" style="background-color:#a00;"></span>
+        <br><br>
+        <form role="form" id="loginForm"  action="javascript:login()" >
+          {% csrf_token %}
+          <div class="form-group">
+          <label for="exampleInputUsername">Username</label>
+          <input required type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+          </div>
+          <div class="form-group">
+          <label for="exampleInputPassword1">Password</label>
+          <input required type="password" class="form-control" id="password" placeholder="Password" name="password">
+          </div>
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+          {% else %}
+            <input type="hidden" name="next" value="/app/">
+          {% endif %}
+          <input type="submit" class="btn btn-primary" value="Login">
+        </form>
+        <hr>
+        Still not here? You are missing out on the coolest technical events happening all around you. Sign up now!
+      </div>
+      <style type="text/css">
+          #your_col{border-left: 1px solid black;}
+      </style>
+      <div class="col-xs-1"></div>
+      <div class="col-xs-1" id="your_col">
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+      </div>
+
+      <div class="col-xs-4">
+        <h4>New students sign up here</h4>
+        Register to stay updated about all the awesome tech events!
+        <hr>
+        <span id="newUserErrors" style="background-color:#a00;"></span>
+        <form role="form" id="addUserForm" class="form-inline" action = "javascript:addUser()">
+        {% csrf_token %}
+          <div class="form-group">
+            <input required type="text" class="form-control" placeholder="Username" name="username">
+            <input required type="password" class="form-control" placeholder="Password" name="password">
+          </div><br><br>
+          
+          <div class="form-group">
+            <input required type="text" class="form-control" placeholder="First Name" name="fname">
+            <input required type="text" class="form-control" placeholder="Last Name" name="lname">
+          </div><br><br>
+          
+          <div class="form-group">
+            <input required type="email" class="form-control" placeholder="Your Email ID" name="email">
+            <input required type="text" class="form-control" placeholder="College Name" name="college">
+          </div><br><br>
+
+          <div class="form-group">
+            <textarea required cols="53" class="form-control" placeholder="Short bio ..." name="bio"></textarea>
+          </div><br><br>
+
+          <button type="submit" class="btn btn-primary">Sign Me Up</button>
+        </form>
+        <hr></hr>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+<script type="text/javascript">
+    function login()
+    {
+      var username = document.getElementById("username").value;
+      var password = document.getElementById("password").value;
+      var done = false;
+      var error; 
+      if(!username && !password){
+        error = "Oh you must be having a name!"
+        $("#errors").html(error).addClass("badge");
+      }else if(!username){
+        error = "Oh you must be having a name!"
+        $("#errors").html(error).addClass("badge");
+      }else if(!password){
+        error = "Oh you must be having a passkey!"
+        $("#errors").html(error).addClass("badge");
+      }else{
+        done = true;
+      }
+      if(done){
+        var loginForm = $("#loginForm").serialize();
+        $.ajax({
+          type:"POST",
+          url:"/app/login/",
+          dataType:"json",
+          data: loginForm,
+          success:function(data){
+            if(data.errors){
+              error = "Are you drunk or not registered?";
+              $("#errors").html(error).addClass("badge");
+              done=false;
+            }else{
+                window.location.href = "/app"
+            }
+          }
+        });
+      }
+    }
+
+    function addUser(){
+        var addUserForm = $("#addUserForm").serialize();
+        $.ajax({
+          type:"POST",
+          url:"/app/register/",
+          dataType:"json",
+          data: addUserForm,
+          success:function(data)
+          {
+            if(data.errors)
+            {
+              error = "That fellow already exists!";
+              $("#newUserErrors").html(error).addClass("badge");
+              done=false;
+            }
+            else
+                window.location.href = "/app"
+          }
+        });
+    }
+    // using jQuery
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+</script>
