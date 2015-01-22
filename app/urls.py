@@ -12,7 +12,8 @@ urlpatterns = patterns('',
 
     url(r'^account/$', views.account, name='index'),
     url(r'^logout/$', views.user_logout, name='index'),
-    # url(r'^change_password/$', views.change_password, name='index'),
- #  url(r'^change_email/$', views.change_email, name='index'),
+    url(r'^chp/$', views.chp, name='index'),
+    url(r'^chbne/$', views.chbne, name='index'),
+    url(r'^chdet/$', views.det, name='index'),
  #  url(r'^change_college/$', views.change_college, name='index'),
 )

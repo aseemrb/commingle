@@ -153,30 +153,45 @@ def starred(request):
         return HttpResponseRedirect("/app")
 
 
-@login_required
-def change_password(request):
-    error = 0
-    if request.method == "POST":
-        old_password = request.POST['old_password']
-        new_password = request.POST['new_password']
-        user = authenticate(username=request.session['username'], password=old_password)
-        if user is not None:
-            query = User.objects.get(username=request.session['username'])
-            query.set_password(new_password)
-            query.save()
-            error = 1
-            t = loader.get_template('users/account.html')
-            c = RequestContext(request, {'error': error})
-            return HttpResponse(t.render(c))
-        else:
-            error = 2
-            t = loader.get_template('users/account.html')
-            c = RequestContext(request, {'error': error})
-            return HttpResponse(t.render(c))
-            
+def chp(request):
 
-@login_required
-def change_email(request):
+    try:
+        if request.session['username']:
+            context = RequestContext(request)
+            error = 0
+            if request.method == 'POST':
+                user = request.session['username']
+                oldp = request.POST['oldp']
+                newp = request.POST['newp']
+                newpa = request.POST['newpa']
+                query = Users.objects.filter(username=user)
+                
+                if(oldp==request.session['password'] and newp==newpa):
+                    usr = Users.objects.filter(username=user)[0]
+                    usr.password = newp
+                    usr.save()
+                    error = 1
+                elif oldp!=request.session['password']:
+                    error = 3
+                elif newp!=newpa:
+                    error = 2
+            return render(request, 'users/account.html', {'error': error})
+    except KeyError:
+        return HttpResponseRedirect("/app")
+
+def chbne(request):
+    error = 3
+    if request.method == "POST":
+        email = request.POST['email']
+        query = User.objects.get(username=request.session['username'])
+        query.email = email
+        query.save()
+        error = 4
+    t = loader.get_template('users/account.html')
+    c = RequestContext(request, {'error': error})
+    return HttpResponse(t.render(c))
+
+def det(request):
     error = 3
     if request.method == "POST":
         email = request.POST['email']

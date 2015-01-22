@@ -9,27 +9,29 @@
     <div class="col-xs-1"></div>
     <div class="col-xs-4">
       <h4>Password</h4>
-      {% if error == 2 %}
+      {% if error == 3 %}
         <span class="label label-danger">Current password misspelled. Are you drunk?</span><br>
+      {% elif error == 2 %}
+        <span class="label label-success">New passwords don't match</span><br>
       {% elif error == 1 %}
         <span class="label label-success">Password updated successfully</span><br>
       {% else %}
         <br>
       {% endif %}
       <br>
-      <form role="form" method="POST" action="/app/change_password/">
+      <form role="form" method="POST" action="/app/chp/">
       {% csrf_token %}
           <div class="form-group">
             <label for="exampleInputEmail1">Current Password</label>
-            <input required type="password" class="form-control" id="exampleInputEmail1" placeholder="Current Password" name="old_password">
+            <input required type="password" class="form-control" id="exampleInputEmail1" placeholder="Current Password" name="oldp">
           </div>
           <div class="form-group">
             <label for="exampleInputPassword1">New Password</label>
-            <input type="password" name="new_password" class="form-control" id="exampleInputPassword1" placeholder="New Password">
+            <input type="password" name="newp" class="form-control" id="exampleInputPassword1" placeholder="New Password">
           </div>
           <div class="form-group">
             <label for="exampleInputPassword2">New Password (again)</label>
-            <input required type="password" class="form-control" id="exampleInputPassword2" placeholder="New Password (again)">
+            <input required type="password" class="form-control" id="exampleInputPassword2" name="newpa" placeholder="New Password (again)">
           </div>
           <input type="submit" class="btn btn-primary" value="Change Password">
       </form>
@@ -38,14 +40,14 @@
     <div class="col-xs-2"></div>
     <div class="col-xs-4">
       <h4>Bio and Email</h4>
-      {% if error == 3 %}
+      {% if error == 4 %}
         <span class="label label-danger">Unable to update email.</span>
-      {% elif error == 4 %}
+      {% elif error == 5 %}
         <span class="label label-success">Email is updated sucessfully.</span>
       {% else %}
       {% endif %}
       <br><br>
-      <form role="form" class="form-inline" method="POST" action="/app/change_email/">
+      <form role="form" class="form-inline" method="POST" action="/app/chbne/">
       {% csrf_token %}
           <div class="form-group">
             <label for="bio">Short Bio</label>
