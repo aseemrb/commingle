@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
 import json
 import time
+import cPickle
 
 # Create your views here.
 def index(request):
@@ -17,11 +18,14 @@ def index(request):
             user = Users.objects.filter(username=request.session['username'])[0]
             users = Users.objects.all()
             struc = []
+
             for feed in feeds:
-                usr = Users.objects.filter(username=feed.user)
+                usr = Users.objects.filter(username=feed.user)[0]
                 struc.append({'feed': feed, 'usr': usr})
 
-            return render(request, 'users/index.html', {'struc': struc, 'user': user})
+            favfeeds = cPickle.loads(user.favs)
+            print favfeeds
+            return render(request, 'users/index.html', {'struc': struc, 'user': user, 'favfeeds': favfeeds})
         else:
             return render(request, 'users/login.html')
     except KeyError:
@@ -42,7 +46,9 @@ def register(request):
         if query:
             errors = True
         else:
-            user = Users.objects.create(username=username, password=password, email=email, fname=fname, lname=lname, college=college, bio=bio)
+            dic = []
+            dat = cPickle.dumps(dic)
+            user = Users.objects.create(username=username, password=password, email=email, fname=fname, lname=lname, college=college, bio=bio, favs=dat)
             request.session['username']  = username
             request.session['password']  = password
             
@@ -91,6 +97,60 @@ def newfeed(request):
     except KeyError:
         return HttpResponseRedirect("/app")
 
+
+def favorite(request, feed_id):
+    try:
+        if request.session['username']:
+            
+            username = request.session['username']
+            feed = Feeds.objects.filter(id=feed_id)[0]
+            user = Users.objects.filter(username=request.session['username'])[0]
+            dic = cPickle.loads(user.favs)
+            dic.append(feed)
+            user.favs = cPickle.dumps(dic)
+            user.save()
+
+        return HttpResponseRedirect("/app")
+
+    except KeyError:
+        return HttpResponseRedirect("/app")
+
+def unfavorite(request, feed_id):
+    try:
+        if request.session['username']:
+            
+            username = request.session['username']
+            feed = Feeds.objects.filter(id=feed_id)[0]
+            user = Users.objects.filter(username=request.session['username'])[0]
+            dic = cPickle.loads(user.favs)
+            dic.remove(feed)
+            user.favs = cPickle.dumps(dic)
+            user.save()
+
+        return HttpResponseRedirect("/app")
+
+    except KeyError:
+        return HttpResponseRedirect("/app")
+
+
+def starred(request):
+    try:
+        if request.session['username']:
+            user = Users.objects.filter(username=request.session['username'])[0]
+            feeds = cPickle.loads(user.favs)
+
+            users = Users.objects.all()
+            struc = []
+
+            for feed in feeds:
+                usr = Users.objects.filter(username=feed.user)[0]
+                struc.append({'feed': feed, 'usr': usr})
+
+            return render(request, 'users/favs.html', {'struc': struc, 'user': user})
+        else:
+            return HttpResponseRedirect("/app")
+    except KeyError:
+        return HttpResponseRedirect("/app")
 
 
 @login_required

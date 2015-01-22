@@ -17,14 +17,7 @@
                 </div>
 
                 <div class="col-xs-1">
-
-                    {% if st.feed in favfeeds %}
-                        <a href="/app/unfav/{{ st.feed.id }}"><span class="glyphicon glyphicon-star" aria-hidden="true"></span></a>
-                    {% else %}
-                        <a href="/app/fav/{{ st.feed.id }}"><span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span></a>
-                    {% endif %}
-
-
+                    <a href="/app/unfav/{{ st.feed.id }}"><span class="glyphicon glyphicon-star" aria-hidden="true"></span></a>
                 </div>
 
                 <div class="col-xs-8">

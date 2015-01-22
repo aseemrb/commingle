@@ -19,6 +19,7 @@ class Users(models.Model):
 	lname = models.CharField(max_length=50)
 	college = models.CharField(max_length=150)
 	bio = models.CharField(max_length=500)
+	favs = models.BinaryField()
 	# attended events
 	# interest filters
 
